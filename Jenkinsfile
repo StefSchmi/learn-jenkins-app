@@ -28,7 +28,7 @@ pipeline {
             steps {
                 sh '''
                     echo "Test stage"
-                    test -f /build/$INDEX_FILE_NAME && echo "$INDEX_FILE_NAME exists."
+                    test -f /build/$INDEX_FILE_NAME
                 '''
             }
         }
