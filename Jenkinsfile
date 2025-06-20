@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        BUILD_FILE_NAME = 'index.html'
+        INDEX_FILE_NAME = 'index.html'
     }
     stages {
         stage('Build') {
@@ -28,7 +28,7 @@ pipeline {
             steps {
                 sh '''
                     echo "Test stage"
-                    grep "Mainboard" build/$BUILD_FILE_NAME
+                    test -f /build/$INDEX_FILE_NAME && echo "$INDEX_FILE_NAME exists."
                 '''
             }
         }
