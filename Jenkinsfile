@@ -36,7 +36,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    #cooment shell scripts
+                    #comment shell scripts
                     echo "Test stage"
                     test -f build/$INDEX_FILE_NAME
                     npm test
