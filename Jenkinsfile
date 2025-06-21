@@ -5,6 +5,10 @@ pipeline {
         INDEX_FILE_NAME = 'index.html'
     }
     stages {
+        // THis is build step
+        /*
+            Everything will explained.
+         */
         stage('Build') {
             agent {
                 docker {
@@ -32,6 +36,7 @@ pipeline {
             }
             steps {
                 sh '''
+                    #cooment shell scripts
                     echo "Test stage"
                     test -f build/$INDEX_FILE_NAME
                     npm test
