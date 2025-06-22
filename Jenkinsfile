@@ -70,6 +70,8 @@ pipeline {
     post {
         always {
             junit 'jest-results/junit.xml'
+            // HTML cannot be shown automatically because of CSP
+            // see https://www.jenkins.io/doc/book/security/configuring-content-security-policy/
             publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
         }
     }
