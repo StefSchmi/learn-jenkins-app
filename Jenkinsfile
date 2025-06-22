@@ -58,7 +58,10 @@ pipeline {
                     # npm install -g serve
                     # local install
                     npm install serve
-                    node_modules/.bin/serve -s build
+                    # &: start ins teh background
+                    node_modules/.bin/serve -s build &
+                    # Wait for server to be started:
+                    sleep 10
                     npx playwright test
                 '''
             }
