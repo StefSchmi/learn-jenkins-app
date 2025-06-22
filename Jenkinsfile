@@ -48,12 +48,17 @@ pipeline {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                     reuseNode true
+                    /* Install as admin:
+                    args '-u root:root' */
                 }
             }
             steps {
                 sh '''
-                    npm install -g serve
-                    serve -s build
+                    # global installatio of serve (may need admin rights):
+                    # npm install -g serve
+                    # local install
+                    npm install serve
+                    node_modules/.bin/serve -s build
                     npx playwright test
                 '''
             }
