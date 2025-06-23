@@ -27,45 +27,52 @@ pipeline {
                 '''
             }
         }
-        stage('Test') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
+
+        stage ('Tests') {
+            parallel {
+                stage('Unit Tests') {
+                    agent {
+                        docker {
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
+                    steps {
+                        sh '''
+                            #comment shell scripts
+                            echo "Test stage"
+                            test -f build/$INDEX_FILE_NAME
+                            npm test
+                        '''
+                    }
+                }
+                stage('E2E') {
+                    agent {
+                        docker {
+                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            reuseNode true
+                            /* Install as admin:
+                            args '-u root:root' */
+                        }
+                    }
+                    steps {
+                        sh '''
+                            # global installatio of serve (may need admin rights):
+                            # npm install -g serve
+                            # local install
+                            npm install serve
+                            # &: start ins teh background
+                            node_modules/.bin/serve -s build &
+                            # Wait for server to be started:
+                            sleep 10
+                            npx playwright test --reporter=html
+                        '''
+                    }
                 }
             }
-            steps {
-                sh '''
-                    #comment shell scripts
-                    echo "Test stage"
-                    test -f build/$INDEX_FILE_NAME
-                    npm test
-                '''
-            }
+
         }
-        stage('E2E') {
-            agent {
-                docker {
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                    reuseNode true
-                    /* Install as admin:
-                    args '-u root:root' */
-                }
-            }
-            steps {
-                sh '''
-                    # global installatio of serve (may need admin rights):
-                    # npm install -g serve
-                    # local install
-                    npm install serve
-                    # &: start ins teh background
-                    node_modules/.bin/serve -s build &
-                    # Wait for server to be started:
-                    sleep 10
-                    npx playwright test --reporter=html
-                '''
-            }
-        }
+        
     }
     post {
         always {
