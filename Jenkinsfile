@@ -79,7 +79,7 @@ pipeline {
                         always {
                             // HTML cannot be shown automatically because of CSP
                             // see https://www.jenkins.io/doc/book/security/configuring-content-security-policy/
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright Local Report', reportTitles: '', useWrapperFileDirectly: true])
                         }
                     }
                 }
@@ -102,6 +102,34 @@ pipeline {
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --prod --no-build
                 '''
+            }
+        }
+
+        stage('Prod E2E') {
+           agent {
+             docker {
+                image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                reuseNode true
+                   /* Install as admin:
+                   args '-u root:root' */
+              }
+            }
+
+            environment {
+                CI_ENVIRONMENT_URL = 'https://dreamy-monstera-d95a96.netlify.app'
+            }
+    
+           steps {
+             sh '''
+                npx playwright test --reporter=html
+                '''
+            }
+            post {
+                always {
+                    // HTML cannot be shown automatically because of CSP
+                    // see https://www.jenkins.io/doc/book/security/configuring-content-security-policy/
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright E2E Report', reportTitles: '', useWrapperFileDirectly: true])
+                }
             }
         }
     }
