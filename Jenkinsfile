@@ -105,14 +105,14 @@ pipeline {
             }
         }
 
-        stage('Approval') {
-            steps {
-                timeout(time: 1, unit: 'MINUTES') {
-                    input cancel: 'Hell No!', message: 'Do you wish to deploy to production?', ok: 'Oh Yeah!'
-                }
+        // stage('Approval') {
+        //     steps {
+        //         timeout(time: 1, unit: 'MINUTES') {
+        //             input cancel: 'Hell No!', message: 'Do you wish to deploy to production?', ok: 'Oh Yeah!'
+        //         }
                 
-            }
-        }
+        //     }
+        // }
         
         stage('Deploy prod') {
             agent {
