@@ -64,7 +64,7 @@ pipeline {
                 stage('E2E') {
                     agent {
                         docker {
-                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            image 'my-playwright'
                             reuseNode true
                             /* Install as admin:
                             args '-u root:root' */
@@ -75,9 +75,9 @@ pipeline {
                             # global installatio of serve (may need admin rights):
                             # npm install -g serve
                             # local install
-                            npm install serve
-                            # &: start ins teh background
-                            node_modules/.bin/serve -s build &
+                            # npm install serve
+                            # &: start ins the background
+                            serve -s build &
                             # Wait for server to be started:
                             sleep 10
                             npx playwright test --reporter=html
