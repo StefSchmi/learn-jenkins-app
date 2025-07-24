@@ -13,11 +13,11 @@ pipeline {
             Everything will explained.
          */
 
-         stage('Docker') {
-            steps {
-                sh 'docker build -t my-playwright .'
-            }
-         }
+        //  stage('Docker') {
+        //     steps {
+        //         sh 'docker build -t my-playwright .'
+        //     }
+        //  }
 
         stage('Build') {
             agent {
