@@ -141,7 +141,7 @@ pipeline {
         stage('Deploy prod') {
            agent {
              docker {
-                image 'playwright'
+                image 'my-playwright'
                 reuseNode true
                    /* Install as admin:
                    args '-u root:root' */
