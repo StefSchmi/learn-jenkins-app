@@ -4,7 +4,9 @@ pipeline {
     environment {
         INDEX_FILE_NAME = 'index.html'
         REACT_APP_VERSION = "1.0.$BUILD_ID"
+        APP_NAME = 'learnjenkinsapp'
         AWS_DEFAULT_REGION = 'us-east-1'
+        AWS_DOCKER_REGISTRY = '506732059628.dkr.ecr.us-east-1.amazonaws.com'
         AWS_ECS_CLUSTER = 'LeanrJenkinsApp-Cluster-Prod-20250815'
         AWS_ECS_SERVICE_PROD = 'LearnJenkinsApp-TaskDefintion-Prod-service-xzgdoz42'
         AWS_ECS_TD_PROD = 'LearnJenkinsApp-TaskDefintion-Prod'
@@ -54,11 +56,15 @@ pipeline {
             }
 
             steps {
-                sh '''
-                    # command for amazon linux 2023:amazon-linux-extras install docker
-                    # yum install -y docker
-                    docker build -t myjenkinsapp .
+                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    sh '''
+                        # command for amazon linux 2023:amazon-linux-extras install docker
+                        # yum install -y docker
+                        docker build -t $AWS_DOCKER_REGISTRY/$APP_NAME:$REACT_APP_VERSION .
+                        aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_DOCKER_REGISTRY
+                        docker push $AWS_DOCKER_REGISTRY/$APP_NAME:$REACT_APP_VERSION
                 '''
+                }
             }
          }
 
@@ -67,7 +73,7 @@ pipeline {
                 docker {
                     image 'my-aws-cli'
                     reuseNode true
-                    args "-u root --entrypoint=''"
+                    args "--entrypoint=''"
                 }
             }
             //environment {
