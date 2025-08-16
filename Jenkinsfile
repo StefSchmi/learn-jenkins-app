@@ -47,7 +47,7 @@ pipeline {
         stage('Build Docker image') {
             agent {
                 docker {
-                    image 'amazon/aws-cli'
+                    image 'my-aws-cli'
                     reuseNode true
                     args "-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=''"
                 }
@@ -56,7 +56,7 @@ pipeline {
             steps {
                 sh '''
                     # command for amazon linux 2023:amazon-linux-extras install docker
-                    yum install -y docker
+                    # yum install -y docker
                     docker build -t myjenkinsapp .
                 '''
             }
@@ -65,7 +65,7 @@ pipeline {
         stage('Deploy to AWS') {
             agent {
                 docker {
-                    image 'amazon/aws-cli'
+                    image 'my-aws-cli'
                     reuseNode true
                     args "-u root --entrypoint=''"
                 }
@@ -81,7 +81,7 @@ pipeline {
                         # echo "Hello S3!" > index.html
                         # aws s3 cp index.html s3://$AWS_S3_BUCKET/index.html
                         # aws s3 sync build s3://$AWS_S3_BUCKET
-                        yum install jq -y
+                        # yum install jq -y
                         LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-defintion-prod.json | jq '.taskDefinition.revision')
                         echo $LATEST_TD_REVISION
                         aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE_PROD --task-definition $AWS_ECS_TD_PROD:$LATEST_TD_REVISION
